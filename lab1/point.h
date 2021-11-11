@@ -13,6 +13,7 @@ public:
   
   friend std::istream& operator>>(std::istream& is, Point& p);
   friend std::ostream& operator<<(std::ostream& os, Point& p);
+  Point &operator=(const Point &p);
 
 private:
   double x_;
