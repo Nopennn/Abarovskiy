@@ -33,6 +33,11 @@ void Triangle::Print(std::ostream& os) {
   os << "c = " << side_c << std::endl;
 }
 
+size_t Triangle::VertexesNumber()
+{
+  return (size_t)3;
+}
+
 Triangle::~Triangle() {
   std::cout << "Triangle deleted" << std::endl;
 }
