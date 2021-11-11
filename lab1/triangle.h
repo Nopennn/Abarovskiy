@@ -11,6 +11,7 @@ public:
   Triangle(double a, double b, double c);
   Triangle(std::istream &is);
   Triangle(const Triangle& other);
+  size_t VertexesNumber();
 
   double Area();
   void Print(std::ostream& os);
