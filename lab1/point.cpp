@@ -25,3 +25,9 @@ std::ostream& operator<<(std::ostream& os, Point& p) {
   os << "(" << p.x_ << ", " << p.y_ << ")";
   return os;
 }
+
+Point &Point::operator=(const Point &p) {
+  this->x_ = p.x_;
+  this->y_ = p.y_;
+  return *this;
+}
