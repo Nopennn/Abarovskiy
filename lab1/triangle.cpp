@@ -4,23 +4,17 @@
 #include <cmath>
 
 Triangle::Triangle()
-    : side_a(0.0), side_b(0.0), side_c(0.0) {
-  std::cout << "Default triangle created" << std::endl;
-}
+    : side_a(0.0), side_b(0.0), side_c(0.0) {}
 
 Triangle::Triangle(double a, double b, double c)
-    : side_a(a), side_b(b), side_c(c) {
-  std::cout << "Triangle created: " << side_a << ", " << side_b << ", " << side_c << std::endl;
-}
+    : side_a(a), side_b(b), side_c(c) {}
 
 Triangle::Triangle(std::istream &is) {
   is >> side_a >> side_b >> side_c;
 }
 
 Triangle::Triangle(const Triangle& other)
-    : Triangle(other.side_a, other.side_b, other.side_c) {
-  std::cout << "Triangle copy created" << std::endl;
-}
+    : Triangle(other.side_a, other.side_b, other.side_c) {}
 
 double Triangle::Area() {
   double p = (side_a + side_b + side_c) / 2.0;
@@ -35,7 +29,7 @@ void Triangle::Print(std::ostream& os) {
 
 size_t Triangle::VertexesNumber()
 {
-  return (size_t)3;
+  return 3;
 }
 
 Triangle::~Triangle() {
