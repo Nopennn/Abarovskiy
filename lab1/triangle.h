@@ -1,27 +1,18 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
-
-#include <iostream>
-
 #include "figure.h"
 
 class Triangle : public Figure {
-public:
+ private:
+  Point a_, b_, c_;
+ public:
   Triangle();
-  Triangle(double a, double b, double c);
+  Triangle(const Triangle &triangle);
   Triangle(std::istream &is);
-  Triangle(const Triangle& other);
   size_t VertexesNumber();
-
   double Area();
-  void Print(std::ostream& os);
+  void Print(std::ostream &os);
 
-  virtual ~Triangle();
-
-private:
-  double side_a;
-  double side_b;
-  double side_c;
 };
 
-#endif // TRIANGLE_H
+#endif //TRIANGLE_H
