@@ -6,6 +6,7 @@
     "Rectangle"
   ],
   "containers": [
+    "TVector"
   ],
   "finished_labs": {
     "lab1:3": "lab1",
