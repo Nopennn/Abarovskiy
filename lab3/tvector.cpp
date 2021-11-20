@@ -25,6 +25,7 @@ void TVector::Erase(int pos)
 		Clear();
 		return;
 	}
+	vals[pos] = NULL;
 	memmove((void*)&(vals[pos]),(void*)&(vals[pos+1]),sizeof(et_tvector)*(len-pos-1));
 	len--;
 	if(len==rLen>>1)
@@ -80,7 +81,7 @@ std::ostream& operator<<(std::ostream& os, TVector& obj)
 	os << '[';
 	for(int i = 0; i < obj.len; i++)
 	{
-		os << ((Triangle)obj.vals[i]).Area();
+		os << obj.vals[i].get()->Area();
 		if(i != obj.len - 1)
 			os << " ";
 	}
@@ -92,6 +93,8 @@ void TVector::Clear()
 {
 	if(!Empty())
 	{
+		for(int i=0;i<len;i++)
+			vals[i]=NULL;
 		free(vals);
 		vals = NULL;
 		len = 0;
