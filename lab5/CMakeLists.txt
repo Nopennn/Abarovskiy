@@ -1,4 +1,4 @@
-add_executable(oop_exercise_04
+add_executable(oop_exercise_05
         figure.h
         main.cpp
         point.cpp
