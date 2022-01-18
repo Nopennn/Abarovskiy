@@ -1,0 +1,11 @@
+add_executable(oop_exercise_03
+        figure.h
+        main.cpp
+        point.cpp
+        point.h
+        rectangle.cpp
+        rectangle.h
+        square.cpp
+        square.h
+        triangle.cpp
+        triangle.h)
