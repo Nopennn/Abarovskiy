@@ -32,7 +32,7 @@ void TVector::Erase(int pos)
 		resize(len);
 }
 
-void TVector::InsertLast(const et_tvector& elem)
+void TVector::InsertLast(const std::shared_ptr<Triangle> t)
 {
 	if(rLen)
 	{
@@ -47,7 +47,7 @@ void TVector::InsertLast(const et_tvector& elem)
 		rLen=1;
 		resize(rLen);
 	}
-	vals[len] = elem;
+	vals[len] = t;
 	len++;
 }
 

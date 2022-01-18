@@ -1,0 +1,9 @@
+add_executable(oop_exercise_04
+        figure.h
+        main.cpp
+        point.cpp
+        point.h
+        tvector.cpp
+        tvector.h
+        triangle.cpp
+        triangle.h)

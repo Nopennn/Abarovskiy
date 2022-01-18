@@ -23,7 +23,7 @@ int main()
 		{
 			case 'a':
 			{
-				vect->InsertLast(Triangle(cin));
+				vect->InsertLast(std::shared_ptr<Triangle>(new Triangle(cin)));
 				break;
 			}
 			case 'd':
@@ -35,10 +35,6 @@ int main()
 			}
 			case 's':
 			{
-				int si;
-				cin >> si;
-				Triangle csq(cin);
-				(*vect)[si] = csq;
 				break;
 			}
 			case 'p':

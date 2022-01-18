@@ -9,11 +9,16 @@
 
 class TVector
 {
+	private:
+		void resize(int newsize);
+		et_tvector *vals;
+		int len;
+		int rLen;
 	public:
 		TVector();
 		TVector(const TVector& other);
 		void Erase(int pos);
-		void InsertLast(const et_tvector& elem);
+		void InsertLast(const std::shared_ptr<Triangle> t);
 		void RemoveLast();
 		const et_tvector& Last();
 		et_tvector& operator[](const size_t idx);
@@ -22,11 +27,6 @@ class TVector
 		friend std::ostream& operator<<(std::ostream& os, TVector& obj);
 		void Clear();
 		~TVector();
-	private:
-		void resize(int newsize);
-		et_tvector *vals;
-		int len;
-		int rLen;
 };
 
 #endif
