@@ -1,0 +1,14 @@
+add_executable(oop_exercise_06
+        figure.h
+        main.cpp
+        point.cpp
+        point.h
+        rectangle.h
+        rectangle.cpp
+        square.h
+        square.cpp
+        tvector.cpp
+        tvector.h
+        triangle.cpp
+        triangle.h
+        templates.cpp)
