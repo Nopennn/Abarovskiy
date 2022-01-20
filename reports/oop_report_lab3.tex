@@ -1,0 +1,415 @@
+\documentclass[12pt]{article}
+
+\usepackage{fullpage}
+\usepackage{multicol,multirow}
+\usepackage{tabularx}
+\usepackage{ulem}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{minted}
+
+\usepackage{color} %% это для отображения цвета в коде
+\usepackage{listings} %% собственно, это и есть пакет listings
+
+\lstset{ %
+language=C++,                 % выбор языка для подсветки (здесь это С++)
+basic style=\small\sffamily, % размер и начертание шрифта для подсветки кода
+numbers=left,               % где поставить нумерацию строк (слева\справа)
+%numberstyle=\tiny,           % размер шрифта для номеров строк
+step number=1,                   % размер шага между двумя номерами строк
+numbersep=5pt,                % как далеко отстоят номера строк от подсвечиваемого кода
+background color=\color{white}, % цвет фона подсветки - используем \usepackage{color}
+show spaces=false,            % показывать или нет пробелы специальными отступами
+showstringspaces=false,      % показывать или нет пробелы в строках
+show tabs=false,             % показывать или нет табуляцию в строках
+frame=single,              % рисовать рамку вокруг кода
+tab size=2,                 % размер табуляции по умолчанию равен 2 пробелам
+captions=t,              % позиция заголовка вверху [t] или внизу [b]
+break lines=true,           % автоматически переносить строки (да\нет)
+breakatwhitespace=false, % переносить строки только если есть пробел
+escape inside={\%*}{*)}   % если нужно добавить комментарии в коде
+}
+
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\textbf{МИНИСТЕРСТВО ОБРАЗОВАНИЯ И НАУКИ РОССИЙСКОЙ ФЕДЕРАЦИИ
+\medskip
+МОСКОВСКИЙ АВИАЦИОННЫЙ ИНСТИТУТ
+(НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСТИТЕТ)
+\vfill\vfill
+{\Huge ЛАБОРАТОРНАЯ РАБОТА №3} \\
+по курсу объектно-ориентированное программирование
+I семестр, 2021/22 уч. год}
+\end{center}
+\vfill
+
+Студент \uline{\it {Абаровский Олег Александрович, группа М8О-207Б-20}\hfill}
+
+Преподаватель \uline{\it {Дорохов Евгений Павлович}\hfill}
+
+\vfill
+\end{titlepage}
+
+\subsection*{Условие}
+
+Задание: \
+Вариант 1: Треугольник, Квадрат, Прямоугольник.\
+Необходимо спроектировать и запрограммировать на языке C++ классы трех фигур, согласно варианту задания. Классы должны удовлетворять следующим правилам:
+\begin{enumerate}
+\item Должны быть названы также, как в вариантах задания и расположенны в раздельных файлах: отдельно заголовки (имя\_класса\_с\_маленькой\_буквы.h), отдельно описание методов (имя\_класса\_с\_маленькой\_буквы.cpp).
+\item Иметь общий родительский класс Figure;
+\item Содержать конструктор, принимающий координаты вершин фигуры из стандартного потока std::cin, расположенных через пробел. Пример: "0.0 0.0 1.0 0.0 1.0 1.0 0.0 1.0"
+\item Содержать набор общих методов:
+\begin{itemize}
+    \item size\_t VertexesNumber() - метод, возвращающий количество вершин фигуры;
+    \item double Area() - метод расчета площади фигуры;
+    \item void Print(std::ostream& os) - метод печати типа фигуры и ее координат вершин в поток вывода os в формате: "Rectangle: (0.0, 0.0) (1.0, 0.0) (1.0, 1.0) (0.0, 1.0)" с переводом строки в конце.
+\end{itemize}
+\end{enumerate}
+
+\subsection*{Описание программы}
+
+Исходный код лежит в 11 файлах:
+\begin{enumerate}
+\item src/main.cpp: основная программа, взаимодействие с пользователем посредством комманд из меню
+
+\item include/figure.h:    описание абстрактного класса фигур
+
+\item include/point.h:     описание класса точки
+\item include/triangle.h:  описание класса треугольника, наследующегося от figures
+\item include/rectangle.h: описание класса прямоугольника, наследующегося от figures
+\item include/square.h:    описание класса квадрата, наследующегося от rectangle
+
+\item include/point.cpp:     реализация класса точки
+\item include/triangle.cpp:  реализация класса треугольника, наследующегося от figures
+\item include/rectangle.cpp: реализация класса прямоугольника, наследующегося от figures
+\item include/square.cpp:    реализация класса квадрата, наследующегося от rectangle
+
+\end{enumerate}
+
+\subsection*{Дневник отладки}
+12.11 Ошибка: неправильно реализован метод печати типа фигуры и координат её вершин в поток вывода os.
+\newline Решение: исправить формат вывода координат фигуры.
+
+\subsection*{Недочёты}
+Недочётов нет
+
+\subsection*{Выводы}
+Работа была полезной, в ходе её выполнения я получил представление об основных принципах объектно-ориентированного программирования. В моём варианте можно не только наследовать классы каждой фигуры от класса figures, но и унаследовать класс одной фигуры от класса другой(квадрат наследуется из прямоугольника)! Это хорошо иллюстрирует принцип наследуемости. Таким образом, эта работа оказалась для меня отличным введением в объектно-ориентированное программирование.
+
+
+\vfill
+
+\subsection*{Исходный код}
+
+{\Huge figure.h}
+\begin{minted}{c++}
+#ifndef FIGURE_H
+#define FIGURE_H
+
+#include <iostream>
+#include "point.h"
+
+class Figure {
+public:
+  virtual size_t VertexesNumber() = 0;
+  virtual double Area() = 0;
+  virtual void Print(std::ostream &os) = 0;
+
+};
+
+#endif // FIGURE_H
+
+\end{minted}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge point.h}
+\begin{minted}{c++}
+#ifndef POINT_H
+#define POINT_H
+
+#include <iostream>
+
+class Point {
+public:
+  Point();
+  Point(std::istream &is);
+  Point(double x, double y);
+
+  double dist(Point& other);
+  
+  friend std::istream& operator>>(std::istream& is, Point& p);
+  friend std::ostream& operator<<(std::ostream& os, Point& p);
+  Point &operator=(const Point &p);
+
+private:
+  double x_;
+  double y_;
+};
+
+#endif // POINT_H
+
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge point.cpp}
+\begin{minted}{c++}
+#include "point.h"
+
+#include <cmath>
+
+Point::Point() : x_(0.0), y_(0.0) {}
+
+Point::Point(double x, double y) : x_(x), y_(y) {}
+
+Point::Point(std::istream &is) {
+  is >> x_ >> y_;
+}
+
+double Point::dist(Point& other) {
+  double dx = (other.x_ - x_);
+  double dy = (other.y_ - y_);
+  return std::sqrt(dx*dx + dy*dy);
+}
+
+std::istream& operator>>(std::istream& is, Point& p) {
+  is >> p.x_ >> p.y_;
+  return is;
+}
+
+std::ostream& operator<<(std::ostream& os, Point& p) {
+  os << "(" << p.x_ << ", " << p.y_ << ")";
+  return os;
+}
+
+Point &Point::operator=(const Point &p) {
+  this->x_ = p.x_;
+  this->y_ = p.y_;
+  return *this;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge main.cpp}
+\begin{minted}{c++}
+#include "figure.h"
+#include "triangle.h"
+#include "square.h"
+#include "rectangle.h"
+
+int main()
+{
+    std::cout << "Enter triangle:\n";
+    Triangle trngl(std::cin);
+    trngl.Print(std::cout);
+    std::cout << "The number of vertexes: " << trngl.VertexesNumber() << "\n";
+    std::cout << "Area: " << trngl.Area() << "\n\n";
+
+    std::cout << "Enter square:\n";
+    Square sqr(std::cin);
+    sqr.Print(std::cout);
+    std::cout << "The number of vertexes: " << sqr.VertexesNumber() << "\n";
+    std::cout << "Area: " << sqr.Area() << "\n\n";
+
+    std::cout << "Enter rectangle:\n";
+    Rectangle rect(std::cin);
+    rect.Print(std::cout);
+    std::cout << "The number of vertexes: " << rect.VertexesNumber() << "\n";
+    std::cout << "Area: " << rect.Area() << "\n";
+    return 0;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge triangle.h}
+\begin{minted}{c++}
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
+#include "figure.h"
+
+class Triangle : public Figure {
+ private:
+  Point a_, b_, c_;
+ public:
+  Triangle();
+  Triangle(const Triangle &triangle);
+  Triangle(std::istream &is);
+  size_t VertexesNumber();
+  double Area();
+  void Print(std::ostream &os);
+
+};
+
+#endif //TRIANGLE_H
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge triangle.cpp}
+\begin{minted}{c++}
+#include "triangle.h"
+#include <math.h>
+
+Triangle::Triangle() : a_(0, 0), b_(0, 0), c_(0, 0) {}
+
+Triangle::Triangle(const Triangle &triangle) {
+  this->a_ = triangle.a_;
+  this->b_ = triangle.b_;
+  this->c_ = triangle.c_;
+}
+
+Triangle::Triangle(std::istream &is) {
+  std::cin >> a_ >> b_ >> c_;
+}
+
+size_t Triangle::VertexesNumber() {
+  return 3;
+}
+
+double Triangle::Area() {
+  double a = a_.dist(b_);
+  double b = b_.dist(c_);
+  double c = c_.dist(a_);
+  double p = (a + b + c) / 2;
+  return sqrt(p * (p - a) * (p - b) * (p - c));
+}
+
+void Triangle::Print(std::ostream &os) {
+  std::cout << "Triangle " << a_ << b_ << c_ << std::endl;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge rectangle.h}
+\begin{minted}{c++}
+#ifndef RECTANGLE_H
+#define RECTANGLE_H
+
+#include "figure.h"
+
+class Rectangle : public Figure {
+ private:
+  Point a_, b_, c_, d_;
+
+ public:
+  Rectangle();
+  Rectangle(const Rectangle &rectangle);
+  Rectangle(std::istream &is);
+  size_t VertexesNumber();
+  double Area();
+  void Print(std::ostream &os);
+
+};
+
+#endif //RECTANGLE_H
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge rectangle.cpp}
+\begin{minted}{c++}
+#include "rectangle.h"
+
+Rectangle::Rectangle() : a_(0, 0), b_(0, 0), c_(0, 0), d_(0, 0) {}
+
+Rectangle::Rectangle(const Rectangle &rectangle) {
+  this->a_ = rectangle.a_;
+  this->b_ = rectangle.b_;
+  this->c_ = rectangle.c_;
+  this->d_ = rectangle.d_;
+}
+
+Rectangle::Rectangle(std::istream &is) {
+  std::cin >> a_ >> b_ >> c_ >> d_;
+}
+
+size_t Rectangle::VertexesNumber() {
+  return 4;
+}
+
+double Rectangle::Area() {
+  double a = a_.dist(b_);
+  double b = b_.dist(c_);
+  return a * b;
+}
+
+void Rectangle::Print(std::ostream &os) {
+  std::cout << "Rectangle " << a_ << b_ << c_ << d_ << std::endl;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge square.h}
+\begin{minted}{c++}
+#ifndef SQUARE_H
+#define SQUARE_H
+
+#include "figure.h"
+
+class Square : public Figure {
+ private:
+  Point a_, b_, c_, d_;
+ public:
+  Square();
+  Square(const Square &square);
+  Square(std::istream &is);
+  size_t VertexesNumber();
+  double Area();
+  void Print(std::ostream &os);
+};
+
+#endif //SQUARE_H
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge square.cpp}
+\begin{minted}{c++}
+
+#include "square.h"
+
+Square::Square() : a_(0, 0), b_(0, 0), c_(0, 0), d_(0, 0) {}
+
+Square::Square(const Square &square) {
+  this->a_ = square.a_;
+  this->b_ = square.b_;
+  this->c_ = square.c_;
+  this->d_ = square.d_;
+}
+
+Square::Square(std::istream &is) {
+  std::cin >> a_ >> b_ >> c_ >> d_;
+}
+
+size_t Square::VertexesNumber() {
+  return (size_t)4;
+}
+
+double Square::Area() {
+  double a = a_.dist(b_);
+  return a * a;
+}
+
+void Square::Print(std::ostream &os) {
+  std::cout << "Square " << a_ << b_ << c_ << d_ << std::endl;
+}
+\end{minted}
+\end{flushleft}
+
+\end{document}
