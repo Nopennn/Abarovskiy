@@ -71,6 +71,16 @@ Complex Complex::operator-(Complex com)
     this->im = this->im - com.im; 
     return *this;
 }
+
+double operator "" _R(long double re)
+{
+    return re;
+}
+
+double operator "" _I(long double im)
+{
+    return im;
+}
  
 int main() 
 {
