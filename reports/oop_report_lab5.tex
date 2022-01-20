@@ -39,7 +39,7 @@ escape inside={\%*}{*)}   % если нужно добавить коммент�
 МОСКОВСКИЙ АВИАЦИОННЫЙ ИНСТИТУТ
 (НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСТИТЕТ)
 \vfill\vfill
-{\Huge ЛАБОРАТОРНАЯ РАБОТА №1} \\
+{\Huge ЛАБОРАТОРНАЯ РАБОТА №5} \\
 по курсу объектно-ориентированное программирование
 I семестр, 2021/22 уч. год}
 \end{center}
@@ -54,26 +54,32 @@ I семестр, 2021/22 уч. год}
 
 \subsection*{Условие}
 
-Разработать программу на языке C++ согласно варианту задания. Программа на C++
-должна собираться с помощью системы сборки CMake. Программа должна получать
-данные из стандартного ввода и выводить данные в стандартный вывод. \
-Необходимо настроить сборку лабораторной работы с помощью CMake. Собранная
-программа должна называться oop_exercise_01 \
 Задание: \
-Вариант 1: Комплексное число в алгебраической форме представляются парой
-действительных чисел (a, b), где a – действительная часть, b – мнимая
-часть. Реализовать класс Complex для работы с комплексными числами.
-Обязательно должны быть присутствовать операции
-- сложения add, (a, b) + (c, d) = (a + c, b + d);
-- вычитания sub, (a, b) – (c, d) = (a – c, b – d);
-- умножения mul, (a, b) ´ (c, d) = (ac – bd, ad + bc);
-- деления div, (a, b) / (c, d) = (ac + bd, bc – ad) / (c 2 + d 2 );
-- сравнение equ, (a, b) = (c, d), если (a = c) и (b = d);
-- сопряженное число conj, conj(a, b) = (a, –b).
+Вариант 1: Динамический массив.\
+Необходимо спроектировать и запрограммировать на языке C++ класс-контейнер первого уровня, содержащий одну фигуру (колонка фигура 1), согласно вариантам задания. Классы должны удовлетворять следующим правилам:
+\begin{enumerate}
+\item Требования к классу фигуры аналогичны требованиям из лабораторной работы 1.
+\item Требования к классу контейнера аналогичны требованиям из лабораторной работы №2;
+\item Класс-контейнер должен содержать объекты используя std::shared\_ptr<…>.
+\end{enumerate}
 
 \subsection*{Описание программы}
 
-Исходный код лежит в файле main.cpp, в котором реализован класс комплексного числа и описаны методы этого класса, среди которых сложение, вычитание, умножение, деление, сравнение, нахождение сопряженного числа.
+Исходный код лежит в 8 файлах:
+\begin{enumerate}
+\item src/main.cpp: основная программа, взаимодействие с пользователем посредством комманд из меню
+
+\item include/figure.h:    описание абстрактного класса фигур
+
+\item include/point.h:     описание класса точки
+\item include/triangle.h:  описание класса треугольника, наследующегося от figures
+\item include/tvector.h:     описание класса контейнера - динамического массива, содержащего объект с помощью умного указателя
+
+\item include/point.cpp:     реализация класса точки
+\item include/triangle.cpp:  реализация класса треугольника, наследующегося от figures
+\item include/tvector.cpp: реализация класса контейнера - динамического массива, содержащего объект с помощью умного указателя
+
+\end{enumerate}
 
 \subsection*{Дневник отладки}
 Исправлений не потребовалось.
@@ -83,96 +89,389 @@ I семестр, 2021/22 уч. год}
 
 
 \subsection*{Выводы}
-В ходе выполнения лабораторной работы я изучил реализацию классов в c++ и создал класс с набором методов согласно варианту задания. Работа была полезной, так как в результате я  получил представление о таком принципе объектно-ориентированного программирования, как инкапсуляция.
+В ходе выполнения работы я познакомился с умными указателями, их задачами и преимуществами по сравнению с обычными указателями, такими как освобождение памяти при выходе объекта класса из области видимости и перемещение памяти. Изучил реализацию умных указателей в языке C++ - shared\_ptr. В итоге удалось создать контейнер, содержащий объекты, используя shared\_ptr.
 
 
 \vfill
 
 \subsection*{Исходный код}
 
-{\Huge main.cpp}
+{\Huge figure.h}
 \begin{minted}{c++}
-#include <iostream> 
-#include <stdio.h>
-using namespace std;
-class Complex 
-{
-public:  
-	double re, im; 
-    Complex(){}
-    Complex(int x, int y)
-    {
-        re = x;
-        im = y;
-    }
-	Complex add(Complex a)
-	{
-	   	double resre, resim;
-	   	resre = a.re + re;
-	   	resim = a.im + im;
-	   	return Complex(resre, resim);
-	}
-	Complex sub(Complex a)
-	{
-	   	double resre, resim;
-	   	resre = re - a.re;
-	   	resim = im - a.im;
-	   	return Complex(resre, resim);
-	}
-	Complex mul(Complex a)
-	{
-	   	double resre, resim;
-	   	resre = a.re * re - a.im * im;
-	   	resim = re * a.im + im * a.re;
-	   	return Complex(resre, resim);
-	}
-	Complex div(Complex a)
-	{
-	   	double resre, resim;
-	   	resre = (re * a.re + im * a.im) / (a.re*a.re + a.im*a.im);
-	   	resim = (a.re * im - re * a.im) / (a.re*a.re + a.im*a.im);
-	   	return Complex(resre, resim);
-	}
-	bool equ(Complex a)
-	{
-	   	return (re == a.re && im == a.im);
-	}
-	Complex conj()
-	{
-	   	return Complex(re, -im);
-	}
-	~Complex(){}
+#ifndef FIGURE_H
+#define FIGURE_H
+
+#include <iostream>
+#include "point.h"
+
+class Figure {
+public:
+  virtual size_t VertexesNumber() = 0;
+  virtual double Area() = 0;
+  virtual void Print(std::ostream &os) = 0;
+
 };
 
-int main()
-{
-	double re, im;
-	bool f;
-	Complex com1, com2, com;
-	printf("Enter complex number one\n");
-	scanf("%lf %lf", &re, &im);
-	com1 = Complex(re, im);
-	printf("Enter complex number two\n");
-	scanf("%lf %lf", &re, &im);
-	com2 = Complex(re, im);
-	com = com1.add(com2);
-	printf("Sum = (%lf, %lf)\n", com.re, com.im);
-	com = com1.sub(com2);
-	printf("Sub = (%lf, %lf)\n", com.re, com.im);
-	com = com1.mul(com2);
-	printf("Mul = (%lf, %lf)\n", com.re, com.im);
-	com = com1.div(com2);
-	printf("Div = (%lf, %lf)\n", com.re, com.im);
-	f = com1.equ(com2);
-	printf("Equ = %d\n", f);
-	com = com1.conj();
-	printf("Conj1 = (%lf, %lf)\n", com.re, com.im);
-	com = com2.conj();
-	printf("Conj2 = (%lf, %lf)\n", com.re, com.im);
-	
-}
+#endif // FIGURE_H
+
 \end{minted}
     \pagebreak
 
+\begin{flushleft}
+{\Huge point.h}
+\begin{minted}{c++}
+#ifndef POINT_H
+#define POINT_H
+
+#include <iostream>
+
+class Point {
+public:
+  Point();
+  Point(std::istream &is);
+  Point(double x, double y);
+
+  double dist(Point& other);
+  
+  friend std::istream& operator>>(std::istream& is, Point& p);
+  friend std::ostream& operator<<(std::ostream& os, Point& p);
+  Point &operator=(const Point &p);
+
+private:
+  double x_;
+  double y_;
+};
+
+#endif // POINT_H
+
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge point.cpp}
+\begin{minted}{c++}
+#include "point.h"
+
+#include <cmath>
+
+Point::Point() : x_(0.0), y_(0.0) {}
+
+Point::Point(double x, double y) : x_(x), y_(y) {}
+
+Point::Point(std::istream &is) {
+  is >> x_ >> y_;
+}
+
+double Point::dist(Point& other) {
+  double dx = (other.x_ - x_);
+  double dy = (other.y_ - y_);
+  return std::sqrt(dx*dx + dy*dy);
+}
+
+std::istream& operator>>(std::istream& is, Point& p) {
+  is >> p.x_ >> p.y_;
+  return is;
+}
+
+std::ostream& operator<<(std::ostream& os, Point& p) {
+  os << "(" << p.x_ << ", " << p.y_ << ")";
+  return os;
+}
+
+Point &Point::operator=(const Point &p) {
+  this->x_ = p.x_;
+  this->y_ = p.y_;
+  return *this;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge main.cpp}
+\begin{minted}{c++}
+#include <iostream>
+#include "triangle.h"
+#include "tvector.h"
+
+using namespace std;
+
+int main()
+{
+	cout << "Comands:" << endl;
+	cout << "a - add new triangle (a [input])" << endl;
+	cout << "d - erase triangle by index (d [idx])" << endl;
+	cout << "s - set triangle by index (s [idx] [input])" << endl;
+	cout << "p - print all containing triangles (p)" << endl;
+	cout << "q - quit (q)" << endl;
+	char f = 1;
+	TVector *vect = new TVector();
+	char cmd;
+	while(f)
+	{
+		cout << "> ";
+		cin >> cmd;
+		switch(cmd)
+		{
+			case 'a':
+			{
+				vect->InsertLast(Triangle(cin));
+				break;
+			}
+			case 'd':
+			{
+				int di;
+				cin >> di;
+				vect->Erase(di);
+				break;
+			}
+			case 's':
+			{
+				int si;
+				cin >> si;
+				Triangle csq(cin);
+				(*vect)[si] = csq;
+				break;
+			}
+			case 'p':
+			{
+				cout << *vect << endl;
+				break;
+			}
+			case 'q':
+			{
+				f = 0;
+				break;
+			}
+			default:
+				cout << "wrong input" << endl;
+		}
+	}
+	delete vect;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge triangle.h}
+\begin{minted}{c++}
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
+#include "figure.h"
+
+class Triangle : public Figure {
+ private:
+  Point a_, b_, c_;
+ public:
+  Triangle();
+  Triangle(const Triangle &triangle);
+  Triangle(std::istream &is);
+  size_t VertexesNumber();
+  double Area();
+  void Print(std::ostream &os);
+
+};
+
+#endif //TRIANGLE_H
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge triangle.cpp}
+\begin{minted}{c++}
+#include "triangle.h"
+#include <math.h>
+
+Triangle::Triangle() : a_(0, 0), b_(0, 0), c_(0, 0) {}
+
+Triangle::Triangle(const Triangle &triangle) {
+  this->a_ = triangle.a_;
+  this->b_ = triangle.b_;
+  this->c_ = triangle.c_;
+}
+
+Triangle::Triangle(std::istream &is) {
+  std::cin >> a_ >> b_ >> c_;
+}
+
+size_t Triangle::VertexesNumber() {
+  return 3;
+}
+
+double Triangle::Area() {
+  double a = a_.dist(b_);
+  double b = b_.dist(c_);
+  double c = c_.dist(a_);
+  double p = (a + b + c) / 2;
+  return sqrt(p * (p - a) * (p - b) * (p - c));
+}
+
+void Triangle::Print(std::ostream &os) {
+  std::cout << "Triangle " << a_ << b_ << c_ << std::endl;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge tvector.h}
+\begin{minted}{c++}
+//TVECTOR.H
+#ifndef TVECTOR_H
+#define TVECTOR_H
+#define et_tvector std::shared_ptr<Figure>
+
+#include <iostream>
+#include "triangle.h"
+#include <memory>
+
+class TVector
+{
+	public:
+		TVector();
+		TVector(const TVector& other);
+		void Erase(int pos);
+		void InsertLast(const et_tvector& elem);
+		void RemoveLast();
+		const et_tvector& Last();
+		et_tvector& operator[](const size_t idx);
+		bool Empty();
+		size_t Length();
+		friend std::ostream& operator<<(std::ostream& os, TVector& obj);
+		void Clear();
+		~TVector();
+	private:
+		void resize(int newsize);
+		et_tvector *vals;
+		int len;
+		int rLen;
+};
+
+#endif
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge tvector.cpp}
+\begin{minted}{c++}
+//TVECTOR.CPP
+#include "tvector.h"
+#include <iostream>
+#include <cstring>
+
+TVector::TVector()
+{
+	vals = NULL;
+	len = 0;
+	rLen = 0;
+}
+
+TVector::TVector(const TVector& other)
+{
+	len = other.len;
+	rLen = other.rLen;
+	vals = (et_tvector*)malloc(sizeof(et_tvector)*len);
+	memcpy((void*)vals, (void*)other.vals, sizeof(et_tvector)*len);
+}
+
+void TVector::Erase(int pos)
+{
+	if(len == 1)
+	{
+		Clear();
+		return;
+	}
+	vals[pos] = NULL;
+	memmove((void*)&(vals[pos]),(void*)&(vals[pos+1]),sizeof(et_tvector)*(len-pos-1));
+	len--;
+	if(len==rLen>>1)
+		resize(len);
+}
+
+void TVector::InsertLast(const et_tvector& elem)
+{
+	if(rLen)
+	{
+		if(len>=rLen)
+		{
+			rLen<<=1;
+			resize(rLen);
+		}
+	}
+	else
+	{
+		rLen=1;
+		resize(rLen);
+	}
+	vals[len] = elem;
+	len++;
+}
+
+void TVector::RemoveLast()
+{
+	Erase(len-1);
+}
+
+const et_tvector& TVector::Last()
+{
+	return vals[len-1];
+}
+
+et_tvector& TVector::operator[](const size_t idx)
+{
+	return vals[idx];
+}
+
+bool TVector::Empty()
+{
+	return len == 0;
+}
+
+size_t TVector::Length()
+{
+	return len;
+}
+
+std::ostream& operator<<(std::ostream& os, TVector& obj)
+{
+	os << '[';
+	for(int i = 0; i < obj.len; i++)
+	{
+		os << obj.vals[i].get()->Area();
+		if(i != obj.len - 1)
+			os << " ";
+	}
+	os << ']';
+	return os;
+}
+
+void TVector::Clear()
+{
+	if(!Empty())
+	{
+		for(int i=0;i<len;i++)
+			vals[i]=NULL;
+		free(vals);
+		vals = NULL;
+		len = 0;
+		rLen = 0;
+	}
+}
+
+void TVector::resize(int newsize)
+{
+	vals = (et_tvector*)realloc((void*)vals, sizeof(et_tvector)*newsize);
+}
+
+TVector::~TVector()
+{
+	Clear();
+}
+\end{minted}
+\end{flushleft}
 
 \end{document}
