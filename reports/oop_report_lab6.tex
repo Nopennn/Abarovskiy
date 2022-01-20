@@ -1,0 +1,504 @@
+\documentclass[12pt]{article}
+
+\usepackage{fullpage}
+\usepackage{multicol,multirow}
+\usepackage{tabularx}
+\usepackage{ulem}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{minted}
+
+\usepackage{color} %% это для отображения цвета в коде
+\usepackage{listings} %% собственно, это и есть пакет listings
+
+\lstset{ %
+language=C++,                 % выбор языка для подсветки (здесь это С++)
+basic style=\small\sffamily, % размер и начертание шрифта для подсветки кода
+numbers=left,               % где поставить нумерацию строк (слева\справа)
+%numberstyle=\tiny,           % размер шрифта для номеров строк
+step number=1,                   % размер шага между двумя номерами строк
+numbersep=5pt,                % как далеко отстоят номера строк от подсвечиваемого кода
+background color=\color{white}, % цвет фона подсветки - используем \usepackage{color}
+show spaces=false,            % показывать или нет пробелы специальными отступами
+showstringspaces=false,      % показывать или нет пробелы в строках
+show tabs=false,             % показывать или нет табуляцию в строках
+frame=single,              % рисовать рамку вокруг кода
+tab size=2,                 % размер табуляции по умолчанию равен 2 пробелам
+captions=t,              % позиция заголовка вверху [t] или внизу [b]
+break lines=true,           % автоматически переносить строки (да\нет)
+breakatwhitespace=false, % переносить строки только если есть пробел
+escape inside={\%*}{*)}   % если нужно добавить комментарии в коде
+}
+
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\textbf{МИНИСТЕРСТВО ОБРАЗОВАНИЯ И НАУКИ РОССИЙСКОЙ ФЕДЕРАЦИИ
+\medskip
+МОСКОВСКИЙ АВИАЦИОННЫЙ ИНСТИТУТ
+(НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСТИТЕТ)
+\vfill\vfill
+{\Huge ЛАБОРАТОРНАЯ РАБОТА №6} \\
+по курсу объектно-ориентированное программирование
+I семестр, 2021/22 уч. год}
+\end{center}
+\vfill
+
+Студент \uline{\it {Абаровский Олег Александрович, группа М8О-207Б-20}\hfill}
+
+Преподаватель \uline{\it {Дорохов Евгений Павлович}\hfill}
+
+\vfill
+\end{titlepage}
+
+\subsection*{Условие}
+
+Задание: \
+Необходимо спроектировать и запрограммировать на языке C++ шаблон класса-контейнера
+первого уровня, содержащий одну фигуру (треугольник), согласно вариантам задания.
+\begin{enumerate}
+\item Требования к классу фигуры аналогичны требованиям из лабораторной работы 1.
+\item Требования к классу контейнера аналогичны требованиям из лабораторной работы №2;
+\item Класс-контейнер должен содержать объекты используя std::shared\_ptr<…>.
+\end{enumerate}
+
+\subsection*{Описание программы}
+
+Исходный код лежит в 13 файлах:
+\begin{enumerate}
+\item src/main.cpp: основная программа, взаимодействие с пользователем посредством комманд из меню
+
+\item include/figure.h:    описание абстрактного класса фигур
+
+\item include/point.h:     описание класса точки
+\item include/triangle.h:  описание класса треугольника, наследующегося от figures
+\item include/rectangle.h: описание класса прямоугольника, наследующегося от figures
+\item include/square.h:    описание класса квадрата, наследующегося от rectangle
+\item include/tvector.h:   описание класса контейнера - динамического массива, содержащего объект с помощью умного указателя
+
+\item include/point.cpp:     реализация класса точки
+\item include/triangle.cpp:  реализация класса треугольника, наследующегося от figures
+\item include/rectangle.cpp: реализация класса прямоугольника, наследующегося от figures
+\item include/square.cpp:    реализация класса квадрата, наследующегося от rectangle
+\item include/tvector.cpp:   реализация класса контейнера - динамического массива, содержащего объект с помощью умного указателя
+\item include/templates.cpp  декларация шаблонов
+
+\end{enumerate}
+
+\subsection*{Дневник отладки}
+Исправлений не потребовалось.
+
+
+\subsection*{Недочёты}
+
+
+\subsection*{Выводы}
+В ходе выполнения работы я познакомился с шаблонами и изучил их реализацию в языке C++ - template. В итоге удалось создать шаблон класса-контейнера, содержащий объекты-треугольники, используя shared\_ptr. Возможность создавать шаблоны классов для универсального использования показалась мне интересной.
+
+
+\vfill
+
+\subsection*{Исходный код}
+
+{\Huge figure.h}
+\begin{minted}{c++}
+#ifndef FIGURE_H
+#define FIGURE_H
+
+#include <iostream>
+#include "point.h"
+
+class Figure {
+public:
+  virtual size_t VertexesNumber() = 0;
+  virtual double Area() = 0;
+  virtual void Print(std::ostream &os) = 0;
+
+};
+
+#endif // FIGURE_H
+
+\end{minted}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge point.h}
+\begin{minted}{c++}
+#ifndef POINT_H
+#define POINT_H
+
+#include <iostream>
+
+class Point {
+public:
+  Point();
+  Point(std::istream &is);
+  Point(double x, double y);
+
+  double dist(Point& other);
+  
+  friend std::istream& operator>>(std::istream& is, Point& p);
+  friend std::ostream& operator<<(std::ostream& os, Point& p);
+  Point &operator=(const Point &p);
+
+private:
+  double x_;
+  double y_;
+};
+
+#endif // POINT_H
+
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge point.cpp}
+\begin{minted}{c++}
+#include "point.h"
+
+#include <cmath>
+
+Point::Point() : x_(0.0), y_(0.0) {}
+
+Point::Point(double x, double y) : x_(x), y_(y) {}
+
+Point::Point(std::istream &is) {
+  is >> x_ >> y_;
+}
+
+double Point::dist(Point& other) {
+  double dx = (other.x_ - x_);
+  double dy = (other.y_ - y_);
+  return std::sqrt(dx*dx + dy*dy);
+}
+
+std::istream& operator>>(std::istream& is, Point& p) {
+  is >> p.x_ >> p.y_;
+  return is;
+}
+
+std::ostream& operator<<(std::ostream& os, Point& p) {
+  os << "(" << p.x_ << ", " << p.y_ << ")";
+  return os;
+}
+
+Point &Point::operator=(const Point &p) {
+  this->x_ = p.x_;
+  this->y_ = p.y_;
+  return *this;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge main.cpp}
+\begin{minted}{c++}
+#include <iostream>
+#include "triangle.h"
+#include "tvector.h"
+
+using namespace std;
+
+int main()
+{
+	cout << "Comands:" << endl;
+	cout << "a - add new triangle (a [input])" << endl;
+	cout << "d - erase triangle by index (d [idx])" << endl;
+	cout << "s - set triangle by index (s [idx] [input])" << endl;
+	cout << "p - print all containing triangles (p)" << endl;
+	cout << "q - quit (q)" << endl;
+	char f = 1;
+	TVector *vect = new TVector();
+	char cmd;
+	while(f)
+	{
+		cout << "> ";
+		cin >> cmd;
+		switch(cmd)
+		{
+			case 'a':
+			{
+				vect->InsertLast(Triangle(cin));
+				break;
+			}
+			case 'd':
+			{
+				int di;
+				cin >> di;
+				vect->Erase(di);
+				break;
+			}
+			case 's':
+			{
+				int si;
+				cin >> si;
+				Triangle csq(cin);
+				(*vect)[si] = csq;
+				break;
+			}
+			case 'p':
+			{
+				cout << *vect << endl;
+				break;
+			}
+			case 'q':
+			{
+				f = 0;
+				break;
+			}
+			default:
+				cout << "wrong input" << endl;
+		}
+	}
+	delete vect;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge triangle.h}
+\begin{minted}{c++}
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
+#include "figure.h"
+
+class Triangle : public Figure {
+ private:
+  Point a_, b_, c_;
+ public:
+  Triangle();
+  Triangle(const Triangle &triangle);
+  Triangle(std::istream &is);
+  size_t VertexesNumber();
+  double Area();
+  void Print(std::ostream &os);
+
+};
+
+#endif //TRIANGLE_H
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge triangle.cpp}
+\begin{minted}{c++}
+#include "triangle.h"
+#include <math.h>
+
+Triangle::Triangle() : a_(0, 0), b_(0, 0), c_(0, 0) {}
+
+Triangle::Triangle(const Triangle &triangle) {
+  this->a_ = triangle.a_;
+  this->b_ = triangle.b_;
+  this->c_ = triangle.c_;
+}
+
+Triangle::Triangle(std::istream &is) {
+  std::cin >> a_ >> b_ >> c_;
+}
+
+size_t Triangle::VertexesNumber() {
+  return 3;
+}
+
+double Triangle::Area() {
+  double a = a_.dist(b_);
+  double b = b_.dist(c_);
+  double c = c_.dist(a_);
+  double p = (a + b + c) / 2;
+  return sqrt(p * (p - a) * (p - b) * (p - c));
+}
+
+void Triangle::Print(std::ostream &os) {
+  std::cout << "Triangle " << a_ << b_ << c_ << std::endl;
+}
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge tvector.h}
+\begin{minted}{c++}
+//TVECTOR.H
+#ifndef TVECTOR_H
+#define TVECTOR_H
+
+#include <iostream>
+#include "triangle.h"
+#include "rectangle.h"
+#include "square.h"
+#include <memory>
+
+template <class T>
+
+class TVector
+{
+	private:
+		void resize(int newsize);
+		std::shared_ptr<T> *vals;
+		int len;
+		int rLen;
+	public:
+		TVector();
+		TVector(const TVector<T>& other);
+		void Erase(int pos);
+		void InsertLast(const std::shared_ptr<T> t);
+		void RemoveLast();
+		const std::shared_ptr<T>& Last();
+		std::shared_ptr<T>& operator[](const size_t idx);
+		bool Empty();
+		size_t Length();
+		template<typename Y>
+  		friend std::istream &operator>>(std::istream &is, TVector<Y> &object);
+		void Clear();
+		~TVector();
+};
+
+#endif
+
+
+#endif
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\begin{flushleft}
+{\Huge tvector.cpp}
+\begin{minted}{c++}
+//TVECTOR.CPP
+#include "tvector.h"
+#include <iostream>
+#include <cstring>
+
+template<typename T>
+TVector<T>::TVector()
+{
+	vals = NULL;
+	len = 0;
+	rLen = 0;
+}
+
+template<typename T>
+TVector<T>::TVector(const TVector<T> & other)
+{
+	len = other.len;
+	rLen = other.rLen;
+	vals = (std::shared_ptr<T>*)malloc(sizeof(std::shared_ptr<T>)*len);
+	memcpy((void*)vals, (void*)other.vals, sizeof(std::shared_ptr<T>)*len);
+}
+
+template<typename T>
+void TVector<T>::Erase(int pos)
+{
+	if(len == 1)
+	{
+		Clear();
+		return;
+	}
+	vals[pos] = NULL;
+	memmove((void*)&(vals[pos]),(void*)&(vals[pos+1]),sizeof(std::shared_ptr<T>)*(len-pos-1));
+	len--;
+	if(len==rLen>>1)
+		resize(len);
+}
+
+template<typename T>
+void TVector<T>::InsertLast(const std::shared_ptr<T> t)
+{
+	if(rLen)
+	{
+		if(len>=rLen)
+		{
+			rLen<<=1;
+			resize(rLen);
+		}
+	}
+	else
+	{
+		rLen=1;
+		resize(rLen);
+	}
+	vals[len] = t;
+	len++;
+}
+
+template<typename T>
+void TVector<T>::RemoveLast()
+{
+	Erase(len-1);
+}
+
+template<typename T>
+const std::shared_ptr<T>& TVector<T>::Last()
+{
+	return vals[len-1];
+}
+
+template<typename T>
+std::shared_ptr<T>& TVector<T>::operator[](const size_t idx)
+{
+	return vals[idx];
+}
+
+template<typename T>
+bool TVector<T>::Empty()
+{
+	return len == 0;
+}
+
+template<typename T>
+size_t TVector<T>::Length()
+{
+	return len;
+}
+
+template<typename T>
+void TVector<T>::Clear()
+{
+	if(!Empty())
+	{
+		for(int i=0;i<len;i++)
+			vals[i]=NULL;
+		free(vals);
+		vals = NULL;
+		len = 0;
+		rLen = 0;
+	}
+}
+
+template<typename T>
+void TVector<T>::resize(int newsize)
+{
+	vals = (std::shared_ptr<T>*)realloc((void*)vals, sizeof(std::shared_ptr<T>)*newsize);
+}
+
+template<typename T>
+TVector<T>::~TVector()
+{
+	Clear();
+}
+
+\end{minted}
+\end{flushleft}
+
+\begin{flushleft}
+{\Huge templates.cpp}
+\begin{minted}{c++}
+##include "tvector.h"
+#include "tvector.cpp"
+
+
+template class TVector<Triangle>;
+template class TVector<Rectangle>;
+template class TVector<Square>;
+
+\end{minted}
+\end{flushleft}
+    \pagebreak
+
+\end{document}
